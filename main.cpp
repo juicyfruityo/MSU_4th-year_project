@@ -1,5 +1,6 @@
 #include "lib/load_mesh_2d.h"
 #include "lib/make_mass_matrix.h"
+#include "lib/make_stiffness_matrix.h"
 
 
 int main() {
@@ -25,9 +26,18 @@ int main() {
   float *MasMatrix = new float[n_size];
   make_mass_matrix(MasMatrix, Elements, n_size, dimension, num_knots);
 
-  
+  // Делаю матрицу жесткости.
+  // TODO: переделать на спарс матрицу.
+  // Надоы бы как-то проверить четче как работает её подсчет
+  // + разобрать вцелом ч там да как под капотом
+  // + надо привести параметризацию задачи в божеский вид
+  // т.е. чтобы в main задавать модуль Юнга и параметры Ламэ.
+  float *StifMatrix = new float[n_size*n_size];
+  make_stiffness_matrix(StifMatrix, Elements, n_size, dimension, num_knots);
+
 
   delete[] MasMatrix;
+  delete[] StifMatrix;
 
   return 0;
 }

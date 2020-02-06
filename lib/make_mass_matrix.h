@@ -56,6 +56,8 @@ void make_mass_matrix(float *MasMatrix, std::vector<element>& Elements,
   for (int i=0; i<25; ++i)
       std::cout << "-";
   std::cout << std::endl;
+
+  delete[] Mloc;
 }
 
 #endif

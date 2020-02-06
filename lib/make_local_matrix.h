@@ -77,12 +77,13 @@ void mass_matrix_local(element &elem, float *Mloc, int loc_size) {
   }
 }
 
-void assembly_one_matrix(element &elem, float *Matrix, float *Mlocal, int n_size) {
-  for (int i=1; i<=8; ++i) {
+void assembly_one_matrix(element &elem, float *Matrix, float *Mlocal,
+    int n_size, int loc_size) {
+  for (int i=1; i<=loc_size; ++i) {
       int I = elem.num[(int)((i-1)/2) + 0]*2 - i%2;
-      for (int j=1; j<=8; ++j) {
+      for (int j=1; j<=loc_size; ++j) {
           int J = elem.num[(int)((j-1)/2) + 0]*2 - j%2;
-          Matrix[(I-1)*n_size+(J-1)] += Mlocal[(i-1)*8+(j-1)];
+          Matrix[(I-1)*n_size+(J-1)] += Mlocal[(i-1)*loc_size+(j-1)];
       }
   }
 }
@@ -95,7 +96,7 @@ void assembly_mass_matrix(element &elem, float *Matrix, float *Mlocal,
           int J = elem.num[(int)((j-1)/2) + 0]*2 - j%2;
     		  if (I == J) {
     				Matrix[(I-1)] += Mlocal[(i-1)*loc_size + (j-1)];
-            std::cout << elem.eid << " : " << (I-1) / 2 << " " << (I-1)%2 << " " << Matrix[(I-1)] << std::endl;
+            // std::cout << elem.eid << " : " << (I-1) / 2 << " " << (I-1)%2 << " " << Matrix[(I-1)] << std::endl;
     		  }
       }
   }
@@ -174,7 +175,7 @@ void make_D_matrix(float *D){
   D[6] = 0; D[7] = 0; D[8] = tmp * (1 - 2*nu) / (2 * (1-nu));
 }
 
-void stiffness_matrix_local(element &elem, float *Klocal) {
+void stiffness_matrix_local(element &elem, float *Klocal, int loc_size) {
   std::vector<float> quad;
   quad.push_back(-1); quad.push_back(1);
   std::vector<float> quad_w;
@@ -185,7 +186,7 @@ void stiffness_matrix_local(element &elem, float *Klocal) {
 
   make_D_matrix(D);
 
-  for (int i=0; i<64; ++i) {
+  for (int i=0; i<loc_size*loc_size; ++i) {
       Klocal[i] = 0;
   }
   // Можно не пересчитывать много раз B, B_t
