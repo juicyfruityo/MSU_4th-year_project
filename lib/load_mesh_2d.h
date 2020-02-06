@@ -9,6 +9,9 @@
   Пока что данная версия работает только для 2d.
 
   TODO: сделать поддержку работы 3d.
+  Чтобы сделать поддержку 3d достаточно заменить
+  node и element, и изменить dim или knot на нужные
+  значения.
 */
 
 #include <iostream>
@@ -59,10 +62,10 @@ struct element {
 std::vector<element> Elements;
 
 
-int load_mesh() {
+int load_mesh(std::string mesh_name, int dimension, int num_knots) {
   std::ifstream f_nodes, f_elements;
   // CHANGE MESH HERE
-  std::string mesh_name = "mesh_6x3";
+  // std::string mesh_name = "mesh_6x3";
 
   // Это в связи с хранением сеток в отдельной папке.
   std::string mesh_dir = "prepared_meshes/" + mesh_name;
@@ -71,8 +74,8 @@ int load_mesh() {
   f_nodes.open(mesh_dir + "/nodes_df.csv");
   f_elements.open(mesh_dir + "/elements_df.csv");
 
-  int dim = 2; // Размерность задачи, число координат.
-  int n_knot = 4; // Число узлов на элемент.
+  int dim = dimension; // Размерность задачи, число координат.
+  int n_knot = num_knots; // Число узлов на элемент.
   std::cout << "Attention, dimension = " << dim << ". Num of nodes = "
             << n_knot << std::endl;
   // int n1, n2, n3, n4;  // n1-4 были предназначены для Elements.

@@ -7,6 +7,8 @@ class FileReader:
                  new_dir='new_mesh', dim=2):
         # Имя файла который был создан фидесисом,
         # где зранится сетка.
+        # Чтобы сделать пожжержку 3d достаточно
+        # изменить переменную dim.
         self.filename = filename
         self.mesh_dir = mesh_dir
         self.raw_mesh_dir = raw_mesh_dir
