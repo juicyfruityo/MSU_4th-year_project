@@ -6,6 +6,7 @@
 #include "lib/make_displacement_velocity.h"
 #include "cuda_lib/solve_problem.cuh"
 #include "lib/save_results.h"
+#include "cuda_lib/gpu_settings.cuh"
 
 /*
   Компилировать всё это дело надо -std=c++11,
@@ -13,6 +14,8 @@
 */
 
 int main() {
+  // gpu_settings();
+
   // Change name of prepared mesh folder.
   std::string mesh_name = "mesh_6x3";
   // TODO: добавить файл конфигурации сетки, для того, Чтобы
