@@ -34,7 +34,6 @@ void save_results(float* U, float* V, std::string mesh_name,
           f_displacements << U[i*n_size+j];
           f_velocities << V[i*n_size+j];
 
-          std::cout << U[i*n_size+j] << " ";
           if (j < n_size - 1) {
               f_displacements << ",";
               f_velocities << ",";
@@ -43,7 +42,6 @@ void save_results(float* U, float* V, std::string mesh_name,
               f_velocities << "\n";
           }
       }
-      std::cout << std::endl;
   }
 
   std::cout << "Writing raw results - DONE" << std::endl;
