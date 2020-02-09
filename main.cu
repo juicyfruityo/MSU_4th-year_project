@@ -4,7 +4,8 @@
 #include "lib/make_force_matrix.h"
 #include "lib/make_border_condition.h"
 #include "lib/make_displacement_velocity.h"
-#include "lib/solve_problem.h"
+#include "cuda_lib/solve_problem.cuh"
+#include "lib/save_results.h"
 
 /*
   Компилировать всё это дело надо -std=c++11,
@@ -97,6 +98,9 @@ int main() {
   // + надо нормально сделать параметризацию задачи.
   // Параметры решения задачи меняются внутри (пока что - надуюсь).
   solve_problem(MasMatrix, StifMatrix, ForceMatrix, U, V, n_size, step);
+
+  // Сохранение матрицы перемещений и скорости для последующего анализа.
+  save_results(U, V, mesh_name, n_size, step);
 
   // TODO: ещё можно удалить Elements и Nodes, если это как-то значимо влияет.
 

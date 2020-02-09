@@ -64,8 +64,6 @@ std::vector<element> Elements;
 
 int load_mesh(std::string mesh_name, int dimension, int num_knots) {
   std::ifstream f_nodes, f_elements;
-  // CHANGE MESH HERE
-  // std::string mesh_name = "mesh_6x3";
 
   // Это в связи с хранением сеток в отдельной папке.
   std::string mesh_dir = "prepared_meshes/" + mesh_name;
