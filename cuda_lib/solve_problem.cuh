@@ -40,8 +40,17 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
 	float theta1 = 1, theta2 = 0;
 
   // Параметры для распаралелливания на видеокарте.
-  int block_size = n_size; // Количество типа процессоров, выполняющих задачу одновременно.
-	int grid_size = 1;  // Блоки объединяются в гриды.
+  // Размер блока 1024 - вроде как.
+  int block_size = 1024; // Количество типа процессоров, выполняющих задачу одновременно.
+	int grid_size = 1 + n_size / 1024;  // Блоки объединяются в гриды.
+  int min_grid_size;
+
+  // Более умное определение block/grid_size.
+  // вроде как работает.
+  cudaOccupancyMaxPotentialBlockSize(&min_grid_size, &block_size,
+      solving_system, 0, n_size);
+  // Round up according to array size
+  grid_size = (n_size + block_size - 1) / block_size;
 
   // Начинаю подготовку для работы с видеокартой.
   // Приставка d_ означает, что эта память предназначена
@@ -60,6 +69,9 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
       std::cout << "-";
   std::cout << std::endl;
   std::cout << "Start solving problem..." << std::endl;
+  std::cout << "        all threads num = " << grid_size*block_size << std::endl;
+  std::cout << "        grid_size = " << grid_size << std::endl;
+  std::cout << "        block_size = " << block_size << std::endl;
 
 
   // Считаем время выполнения задачи на CUDA.
@@ -93,7 +105,8 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
   gpuErrchk( cudaMemcpy(d_v, V, size / n_size * step, cudaMemcpyHostToDevice) );
 
   // Непосредственно само решение задачи.
-  for (int iter=0; iter<step; ++iter) {
+  // Было <step - мб это как-то влияет.
+  for (int iter=0; iter<step-2; ++iter) {
       // Вызов CUDA-kernel, для решения одной итерации задачи.
       solving_system<<<grid_size, block_size>>>(d_M, d_K, d_F, d_u, d_v,
           d_alpha, iter, tao, n_size, d_tmp_force, 0);
@@ -131,7 +144,7 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&time, start, stop);
   std::cout << std::endl;
-  std::cout << "GPU computing time: " << time << std::endl;
+  std::cout << "GPU computing time: " << time << " microseconds" << std::endl;
   // std::cout << std::endl;
   std::cout << "Solving problem - DONE" << std::endl;
   for (int i=0; i<25; ++i)

@@ -11,17 +11,36 @@
 /*
   Компилировать всё это дело надо -std=c++11,
   компиляртор для cuda - nvcc.
+
+  Преобразование от nid (номер узла) к соответсвующему ему
+  значению строки/столбца определяется по формуле:
+      для координаты X - 2 * (nid - 1)
+      для координаты Y - 2 * (nid - 1) + 1
+
+
 */
 
+
 int main() {
-  // gpu_settings();
+  gpu_settings();
 
   // Change name of prepared mesh folder.
-  std::string mesh_name = "mesh_6x3";
+  std::string mesh_name = "test_lemb_v2_4141nodes";
+  // std::string mesh_name;
+
+  // std::cout << std::endl << "Put name of folder:" << std::endl;
+  // std::cin >> mesh_name;  // Только имя папки.
+  // std::cout << std::endl;
   // TODO: добавить файл конфигурации сетки, для того, Чтобы
   // можно было удобно выгрудать инфомрацию о сетке.
 
   // Размерность задачи, количестов узлов на один элемент.
+  std::cout << "!!! Don't forget change program parameters !!!" << '\n';
+  std::cout << "        n_size, step;\n        ro, E, nu, mu;\n        "
+            << "force, vector, Elements, etc...;\n        border condition;\n"
+            << "        additional info, folder name;" << '\n';
+  std::cout << std::endl;
+
   int dimension = 2, num_knots = 4;
 
   load_mesh(mesh_name, dimension, num_knots);
@@ -29,8 +48,8 @@ int main() {
 
   // Количество узлов * 2 (количество координат (x y), для 3д - 3 координаты).
   // Количестов узлов - количество узлов в Nodes, размер Nodes.
-  int n_size = 32 * dimension;
-  int step = 100;  // Количество итераций алгоритма.
+  int n_size = 4141 * dimension;
+  int step = 1000;  // Количество итераций алгоритма.
 
   // Делаю матрицу масс.
   // Имеет такую размерность, потому что это сама по себе
@@ -46,8 +65,10 @@ int main() {
   // + надо привести параметризацию задачи в божеский вид
   // т.е. чтобы в main задавать модуль Юнга и параметры Ламэ.
   // Это слабое место, при подсчете B могут возникнуть ошибки.
+  float E = 10000000;
+  float nu = 0.0;
   float *StifMatrix = new float[n_size*n_size];
-  make_stiffness_matrix(StifMatrix, Elements, n_size, dimension, num_knots);
+  make_stiffness_matrix(StifMatrix, Elements, n_size, dimension, num_knots, E, nu);
 
   // Делаю матрицу сил.
   // TODO: опять же нормально разобраться, что там внутри
@@ -67,8 +88,8 @@ int main() {
   // матрицы жесткости (вроде как надо занулить соответсвующий
   // столбец и строчку).
   // TODO: разобраться как работают в данном случае граничные условия.
-  float y_bord = 1.5;
-  float x_bord = 3;
+  float y_bord = 10;
+  float x_bord = 10;
 
   // TODO: поэкспериментировать, все ли будет ок, с такими гр. условиями.
   make_border_condition(Nodes, MasMatrix, StifMatrix, ForceMatrix,
@@ -103,7 +124,8 @@ int main() {
   solve_problem(MasMatrix, StifMatrix, ForceMatrix, U, V, n_size, step);
 
   // Сохранение матрицы перемещений и скорости для последующего анализа.
-  save_results(U, V, mesh_name, n_size, step);
+  std::string addition_info = "test";
+  save_results(U, V, mesh_name, n_size, step, addition_info);
 
   // TODO: ещё можно удалить Elements и Nodes, если это как-то значимо влияет.
 

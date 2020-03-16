@@ -15,9 +15,12 @@ __device__ void Ricker_amplitude(float *F, float *force, int iter,
 	const float pi = 3.141592;
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	if (offset != 0) {
-		i += offset;
+  		i += offset;
 	}
 
+  // f - частота, обратно пропорциональна длине волны.
+  // A - амплитуда волны, максимальное удаление от среднего значения.
+  // Данное смещение по времени, чтобы сила возрастала от 0.
 	float t = tao * iter - 1.0 / std::sqrt(2 * pi * pi * f * f);
 	float A = (1 - 2 * pi*pi * f*f * t*t) * exp(-pi*pi * f*f * t*t);
 
@@ -51,16 +54,17 @@ __global__ void solving_system(float *M, float *K, float *F, float *U, float *V,
   // на соседние узлы в среде.
 	float tmp = 0;
 	for (int j=0; j<n_size; ++j) {
-  		if (abs(K[i*n_size+j]) <= 0.00001) {
-    			K[i*n_size+j] = 0;
-  		}
-  		tmp += K[i*n_size+j] * U[(iter+1)*n_size+j]; // K[i*n_size+j]
+      // Мб это не надо делать?.
+  		// if (abs(K[i*n_size+j]) <= 0.00001) {
+    	// 		K[i*n_size+j] = 0;
+  		// }
+  		tmp += K[i*n_size+j] * U[(iter+1)*n_size+j];
 	}
 
   // Считаем текущий вектор силы, который изменяется
   // во времени согласно какому-то закону (Например амплитуде Рикера).
-  float amplitude = 20;
-	Ricker_amplitude(F, tmp_force, iter, tao, amplitude, offset);
+  float frequency = 100;  // Было 20
+	Ricker_amplitude(F, tmp_force, iter, tao, frequency, offset);
 
 	if (M[i] == 0) {
       // Для избежания конфликта с граничными условиями.

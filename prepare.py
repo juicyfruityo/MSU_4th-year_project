@@ -5,7 +5,7 @@ def main():
     print('ATTENTION: its for 2d only, TODO: add also 3d reading')
     print('-'*25)
     print('Put filename to parse mesh from:')
-    filename = input()  # Файл, который надо распарсить.
+    filename = input()  # Файл, который надо распарсить. Полное имя.
     # print('Put direction where locate all the meshes:')
     # mesh_dir = input()
     mesh_dir = 'prepared_meshes'  # Папка где будут лежать готовые сетки.

@@ -10,11 +10,11 @@
 #include <iostream>
 
 void save_results(float* U, float* V, std::string mesh_name,
-    int n_size, int step) {
+    int n_size, int step, std::string addition_info) {
 
   // Храню результаты в отдельной папке с названием,
   // таким же как название сетки.
-  std::string res_dir = "raw_results/" + mesh_name;
+  std::string res_dir = "raw_results/" + mesh_name + "_" + addition_info;
   const char *new_dir = res_dir.c_str();
 
   std::cout << std::endl;

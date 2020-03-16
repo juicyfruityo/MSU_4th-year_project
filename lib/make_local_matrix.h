@@ -166,17 +166,18 @@ void make_grad_matrix(element &elem, float *B, float *B_t, float xi, float eta) 
   }
 }
 
-void make_D_matrix(float *D){
+void make_D_matrix(float *D, float E, float nu){
   // создаю D для матрицы жестоксти
-  float E = 10000000;
-  float nu = 0.25;// 0.25; , 0 - чтобы были гарничные условия верны
+  // float E = 10000000;
+  // float nu = 0.25;// 0.25; , 0 - чтобы были гарничные условия верны
   float tmp = E * (1-nu) / ((1+nu) * (1-2*nu));
   D[0] = tmp; D[1] = tmp * nu / (1-nu); D[2] = 0;
   D[3] = tmp * nu / (1-nu); D[4] = tmp; D[5] = 0;
   D[6] = 0; D[7] = 0; D[8] = tmp * (1 - 2*nu) / (2 * (1-nu));
 }
 
-void stiffness_matrix_local(element &elem, float *Klocal, int loc_size) {
+void stiffness_matrix_local(element &elem, float *Klocal, int loc_size,
+    float E, float nu) {
   std::vector<float> quad;
   quad.push_back(-1); quad.push_back(1);
   std::vector<float> quad_w;
@@ -185,7 +186,7 @@ void stiffness_matrix_local(element &elem, float *Klocal, int loc_size) {
   float *B_t = new float[24];
   float *D = new float[9];
 
-  make_D_matrix(D);
+  make_D_matrix(D, E, nu);
 
   for (int i=0; i<loc_size*loc_size; ++i) {
       Klocal[i] = 0;
@@ -220,44 +221,44 @@ void stiffness_matrix_local(element &elem, float *Klocal, int loc_size) {
       }
   }
 
-  /*for (int i=0; i<8; ++i) {
-	  for (int j=0; j<8; ++j) {
-
-		for (int k=0; k<quad.size(); ++k) {
-			for (int l=0; l<quad.size(); ++l) {
-				make_grad_matrix(elem, B, B_t, quad[k], quad[l]);
-				float jacobian = Jacobian(elem, quad[k], quad[l]);
-
-				//if (jacobian < 0)
-					//std::cout << elem.eid << ": " << jacobian << std::endl;
-
-				float K_tmp = 0;
-
-                  for (int m=0; m<3; ++m) {
-                      float tmp = 0;
-
-                      for (int n=0; n<3; ++n) {
-                          tmp += D[m*3+n] * B[n*8+j];
-                      }
-                      K_tmp += B_t[i*3+m] * tmp;
-                  }*/
-				  /*if (i==0 && j ==3) {
-					  for (int r=0; r<3; ++r) {
-						  for (int t=0; t<8; ++t) {
-							std::cout << B[r*8+t] << "  ";
-						  }
-						  std::cout << std::endl;
-					  }
-					  std::cout << std::endl;
-				  }*/
-                  /*K_tmp *= jacobian
-                        * quad_w[k] * quad_w[l];
-				  Klocal[i*8+j] += K_tmp;
-			}
-		}
-
-	  }
-  }*/
+  // for (int i=0; i<8; ++i) {
+	//   for (int j=0; j<8; ++j) {
+  //
+	// 	for (int k=0; k<quad.size(); ++k) {
+	// 		for (int l=0; l<quad.size(); ++l) {
+	// 			make_grad_matrix(elem, B, B_t, quad[k], quad[l]);
+	// 			float jacobian = Jacobian(elem, quad[k], quad[l]);
+  //
+	// 			//if (jacobian < 0)
+	// 				//std::cout << elem.eid << ": " << jacobian << std::endl;
+  //
+	// 			float K_tmp = 0;
+  //
+  //                 for (int m=0; m<3; ++m) {
+  //                     float tmp = 0;
+  //
+  //                     for (int n=0; n<3; ++n) {
+  //                         tmp += D[m*3+n] * B[n*8+j];
+  //                     }
+  //                     K_tmp += B_t[i*3+m] * tmp;
+  //                 }
+	// 			  /*if (i==0 && j ==3) {
+	// 				  for (int r=0; r<3; ++r) {
+	// 					  for (int t=0; t<8; ++t) {
+	// 						std::cout << B[r*8+t] << "  ";
+	// 					  }
+	// 					  std::cout << std::endl;
+	// 				  }
+	// 				  std::cout << std::endl;
+	// 			  }*/
+  //                 K_tmp *= jacobian
+  //                       * quad_w[k] * quad_w[l];
+	// 			  Klocal[i*8+j] += K_tmp;
+	// 		}
+	// 	}
+  //
+	//   }
+  // }
 }
 
 void force_matrix_local(element &elem, float *Flocal, float f,

@@ -11,7 +11,7 @@
 #include <iostream>
 
 void make_stiffness_matrix(float *StifMatrix, std::vector<element>& Elements,
-    int n_size, int dim, int n_knot) {
+    int n_size, int dim, int n_knot, float E, float nu) {
 
   int loc_size = dim * n_knot;
   float *Kloc = new float[loc_size*loc_size];
@@ -25,7 +25,7 @@ void make_stiffness_matrix(float *StifMatrix, std::vector<element>& Elements,
   std::cout << "Start making stiffness matrix..." << std::endl;
 
   for (int i=0; i<Elements.size(); ++i) {
-      stiffness_matrix_local(Elements[i], Kloc, loc_size);
+      stiffness_matrix_local(Elements[i], Kloc, loc_size, E, nu);
       assembly_one_matrix(Elements[i], StifMatrix, Kloc, n_size, loc_size);
 
       for(int j=0; j<loc_size*loc_size; ++j) {

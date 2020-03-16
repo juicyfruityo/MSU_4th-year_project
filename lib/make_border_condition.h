@@ -16,31 +16,101 @@ void make_border_condition(std::vector<node>& Nodes, float *MasMatrix,
   std::cout << "Start making border conditon..." << std::endl;
 
   for (int i=0; i<Nodes.size(); ++i) {
-      if (abs(Nodes[i].x) == x_bord || abs(Nodes[i].y) == y_bord) {
+      // Было: обнуляем и x и y вместе.
+      // if (abs(Nodes[i].x) == x_bord || abs(Nodes[i].y) == y_bord) {
+      //     int k_x = 2 * (Nodes[i].nid - 1);  // Было только это.
+      //     // Добавлю ещё для y.
+      //     int k_y = 2 * (Nodes[i].nid - 1) + 1;
+      //     ForceMatrix[k_x] = 0;
+    	// 		MasMatrix[k_x] = 0;
+      //
+      //     ForceMatrix[k_y] = 0;
+    	// 		MasMatrix[k_y] = 0;
+      //
+      //     for (int j=0; j<n_size; ++j) {
+      //         StifMatrix[k_x*n_size+j] = 0;
+      //         StifMatrix[j*n_size+k_x] = 0;
+      //         if (k_x == j) {
+      //             StifMatrix[k_x*n_size+j] = 1;  // Here was 1
+      //         }
+      //
+      //         StifMatrix[k_y*n_size+j] = 0;
+      //         StifMatrix[j*n_size+k_y] = 0;
+      //         if (k_y == j) {
+      //             StifMatrix[k_y*n_size+j] = 1;  // Here was 1
+      //         }
+      //     }
+      // }
+
+      // Стало: обнудяем все по отдельности по надобности.
+      if (abs(Nodes[i].x) == x_bord) {
           int k_x = 2 * (Nodes[i].nid - 1);  // Было только это.
-          // Добавлю ещё для y.
-          int k_y = 2 * (Nodes[i].nid - 1) + 1;
           ForceMatrix[k_x] = 0;
     			MasMatrix[k_x] = 0;
-
-          ForceMatrix[k_y] = 0;
-    			MasMatrix[k_y] = 0;
 
           for (int j=0; j<n_size; ++j) {
               StifMatrix[k_x*n_size+j] = 0;
               StifMatrix[j*n_size+k_x] = 0;
               if (k_x == j) {
-                  StifMatrix[k_x*n_size+j] = 1;
+                  StifMatrix[k_x*n_size+j] = 1;  // Here was 1
               }
+          }
 
+          int k_y = 2 * (Nodes[i].nid - 1) + 1;
+          ForceMatrix[k_y] = 0;
+    			MasMatrix[k_y] = 0;
+
+          for (int j=0; j<n_size; ++j) {
               StifMatrix[k_y*n_size+j] = 0;
               StifMatrix[j*n_size+k_y] = 0;
               if (k_y == j) {
-                  StifMatrix[k_y*n_size+j] = 1;
+                  StifMatrix[k_y*n_size+j] = 1;  // Here was 1
+              }
+          }
+      }
+
+      if (abs(Nodes[i].y) == y_bord) {
+          // int k_x = 2 * (Nodes[i].nid - 1);  // Было только это.
+          // ForceMatrix[k_x] = 0;
+          // MasMatrix[k_x] = 0;
+          //
+          // for (int j=0; j<n_size; ++j) {
+          //     StifMatrix[k_x*n_size+j] = 0;
+          //     StifMatrix[j*n_size+k_x] = 0;
+          //     if (k_x == j) {
+          //         StifMatrix[k_x*n_size+j] = 1;  // Here was 1
+          //     }
+          // }
+
+          int k_y = 2 * (Nodes[i].nid - 1) + 1;
+          ForceMatrix[k_y] = 0;
+    			MasMatrix[k_y] = 0;
+
+          for (int j=0; j<n_size; ++j) {
+              StifMatrix[k_y*n_size+j] = 0;
+              StifMatrix[j*n_size+k_y] = 0;
+              if (k_y == j) {
+                  StifMatrix[k_y*n_size+j] = 1;  // Here was 1
               }
           }
       }
   }
+
+  // ВНИМАНИЕ! Здесь произовдится тестирование.
+  // убираю все перемещения по y.
+  // for (int i=0; i<Nodes.size(); ++i) {
+  //     int k_y = 2 * (Nodes[i].nid - 1);
+  //     ForceMatrix[k_y] = 0;
+  //     MasMatrix[k_y] = 0;
+  //
+  //     for (int j=0; j<n_size; ++j) {
+  //         StifMatrix[k_y*n_size+j] = 0;
+  //         StifMatrix[j*n_size+k_y] = 0;
+  //         if (k_y == j) {
+  //             StifMatrix[k_y*n_size+j] = 1;  // Here was 1
+  //         }
+  //     }
+  // }
 
   std::cout << "Border condition - DONE" << std::endl;
   for (int i=0; i<25; ++i)

@@ -25,10 +25,25 @@ void make_force_matrix(float *ForceMatrix, std::vector<element>& Elements,
   std::cout << std::endl;
   std::cout << "Start making force matrix..." << std::endl;
 
+  // std::cout << "Force making here ->" << std::endl;
   // Предположительно здесь располагается элемент(ы),
   // к которым приложена сила.
-  force_matrix_local(Elements[3], Floc, f, f_vector, loc_size);
-  assembly_force_matrix(Elements[3], ForceMatrix, Floc, loc_size);
+  int num_elem = 50;  // не забыть вычесть 1
+  force_matrix_local(Elements[num_elem], Floc, f, f_vector, loc_size);
+  assembly_force_matrix(Elements[num_elem], ForceMatrix, Floc, loc_size);
+
+  // Прилагается сила к группе элементов.
+  // Требуется учесть, что нумерация node внутри одного элемента не всегда очевидна.
+  // float y_param = 0;
+  // float x_param = -5;
+  // for (int i=0; i<Elements.size(); ++i) {
+  //     // Изначально было только _node[1].
+  //     if (Elements[i]._node[1].x == x_param || Elements[i]._node[0].x == x_param ||
+  //         Elements[i]._node[2].x == x_param || Elements[i]._node[3].x == x_param) {
+  //         force_matrix_local(Elements[i], Floc, f, f_vector, loc_size);
+  //         assembly_force_matrix(Elements[i], ForceMatrix, Floc, loc_size);
+  //     }
+  // }
 
   std::cout << "Force matrix - OK" << std::endl;
   for (int i=0; i<n_size; ++i) {
