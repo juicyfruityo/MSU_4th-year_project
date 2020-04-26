@@ -43,7 +43,8 @@ void make_border_condition(std::vector<node>& Nodes, float *MasMatrix,
       // }
 
       // Стало: обнудяем все по отдельности по надобности.
-      if (abs(Nodes[i].x) == x_bord) {
+      // if (abs(Nodes[i].x) == x_bord) {
+      if (Nodes[i].x == x_bord) {
           int k_x = 2 * (Nodes[i].nid - 1);  // Было только это.
           ForceMatrix[k_x] = 0;
     			MasMatrix[k_x] = 0;
@@ -52,7 +53,7 @@ void make_border_condition(std::vector<node>& Nodes, float *MasMatrix,
               StifMatrix[k_x*n_size+j] = 0;
               StifMatrix[j*n_size+k_x] = 0;
               if (k_x == j) {
-                  StifMatrix[k_x*n_size+j] = 1;  // Here was 1
+                  StifMatrix[k_x*n_size+j] = 0;  // Here was 1
               }
           }
 
@@ -64,7 +65,7 @@ void make_border_condition(std::vector<node>& Nodes, float *MasMatrix,
               StifMatrix[k_y*n_size+j] = 0;
               StifMatrix[j*n_size+k_y] = 0;
               if (k_y == j) {
-                  StifMatrix[k_y*n_size+j] = 1;  // Here was 1
+                  StifMatrix[k_y*n_size+j] = 0;  // Here was 1
               }
           }
       }

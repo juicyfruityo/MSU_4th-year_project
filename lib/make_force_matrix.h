@@ -13,9 +13,9 @@ void make_force_matrix(float *ForceMatrix, std::vector<element>& Elements,
   int loc_size = dim * n_knot;
   float *Floc = new float[loc_size];
   float *f_vector = new float[dim];
-  f_vector[0] = 0;  // x compoent of vector f
-  f_vector[1] = -1;  // y compoent of vector f
-  float f = 4000;  // something like f(t)
+  f_vector[0] = 0; // -1  // x compoent of vector f
+  f_vector[1] = -1; // 0  // y compoent of vector f
+  float f = 1; // 4000  // something like f(t)
   for (int i=0; i<n_size; ++i)
       ForceMatrix[i] = 0;
 
@@ -32,14 +32,15 @@ void make_force_matrix(float *ForceMatrix, std::vector<element>& Elements,
   force_matrix_local(Elements[num_elem], Floc, f, f_vector, loc_size);
   assembly_force_matrix(Elements[num_elem], ForceMatrix, Floc, loc_size);
 
-  // Прилагается сила к группе элементов.
+  // Прилагается сила к группе элементов
   // Требуется учесть, что нумерация node внутри одного элемента не всегда очевидна.
   // float y_param = 0;
-  // float x_param = -5;
+  // float x_param = 5;
   // for (int i=0; i<Elements.size(); ++i) {
   //     // Изначально было только _node[1].
   //     if (Elements[i]._node[1].x == x_param || Elements[i]._node[0].x == x_param ||
   //         Elements[i]._node[2].x == x_param || Elements[i]._node[3].x == x_param) {
+  //     // if (Elements[i]._node[0].x == x_param) {
   //         force_matrix_local(Elements[i], Floc, f, f_vector, loc_size);
   //         assembly_force_matrix(Elements[i], ForceMatrix, Floc, loc_size);
   //     }

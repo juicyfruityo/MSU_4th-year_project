@@ -88,8 +88,8 @@ int main() {
   // матрицы жесткости (вроде как надо занулить соответсвующий
   // столбец и строчку).
   // TODO: разобраться как работают в данном случае граничные условия.
-  float y_bord = 10;
-  float x_bord = 10;
+  float y_bord = 100; // было и там и там 10
+  float x_bord = 100;
 
   // TODO: поэкспериментировать, все ли будет ок, с такими гр. условиями.
   make_border_condition(Nodes, MasMatrix, StifMatrix, ForceMatrix,
@@ -124,7 +124,7 @@ int main() {
   solve_problem(MasMatrix, StifMatrix, ForceMatrix, U, V, n_size, step);
 
   // Сохранение матрицы перемещений и скорости для последующего анализа.
-  std::string addition_info = "test";
+  std::string addition_info = "test_v5";
   save_results(U, V, mesh_name, n_size, step, addition_info);
 
   // TODO: ещё можно удалить Elements и Nodes, если это как-то значимо влияет.

@@ -3,6 +3,7 @@
 
 #include "load_mesh_2d.h"
 #include <cmath>
+#include <iostream>
 
 
 float basis_function(int num, float xi, float eta) {
@@ -81,6 +82,7 @@ void assembly_one_matrix(element &elem, float *Matrix, float *Mlocal,
     int n_size, int loc_size) {
   for (int i=1; i<=loc_size; ++i) {
       int I = elem.num[(int)((i-1)/2) + 0]*2 - i%2;
+
       for (int j=1; j<=loc_size; ++j) {
           int J = elem.num[(int)((j-1)/2) + 0]*2 - j%2;
           Matrix[(I-1)*n_size+(J-1)] += Mlocal[(i-1)*loc_size+(j-1)];

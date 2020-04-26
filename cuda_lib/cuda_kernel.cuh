@@ -8,6 +8,7 @@
 #include "cublas_v2.h"
 
 #include <cmath>
+#include <stdio.h>
 
 __device__ void Ricker_amplitude(float *F, float *force, int iter,
     float tao, float f, int offset) {
@@ -21,24 +22,28 @@ __device__ void Ricker_amplitude(float *F, float *force, int iter,
   // f - частота, обратно пропорциональна длине волны.
   // A - амплитуда волны, максимальное удаление от среднего значения.
   // Данное смещение по времени, чтобы сила возрастала от 0.
-	float t = tao * iter - 1.0 / std::sqrt(2 * pi * pi * f * f);
-	float A = (1 - 2 * pi*pi * f*f * t*t) * exp(-pi*pi * f*f * t*t);
+	// float t = tao * iter - 1.0 / std::sqrt(2 * pi * pi * f * f);
+	// float A = (1 - 2 * pi*pi * f*f * t*t) * exp(-pi*pi * f*f * t*t);
+
+  float t0 = 0, t = tao * iter;
+  float A = (1 - 2 * pow((pi * f * (t - t0) - pi), 2))
+            * exp(-pow((pi * f * (t - t0) - pi), 2));
 
 	force[i] =  F[i] * A;
 
 }
 
 __global__ void solving_system(float *M, float *K, float *F, float *U, float *V,
-    float *alpha, int iter, float tao, int n_size, float *tmp_force, int offset) {
+    float *alpha, int iter, float tao, int n_size, float *tmp_force, int offset=0) {
 
   // Каждое i отвечает за свой элемент в столбце (свой узел).
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
   // Не понимаю зачем это было,
   // вроде чтобы чета распараллелить сильнее.
-	if (offset != 0) {
-      i += offset;
-	}
+	// if (offset != 0) {
+  //     i += offset;
+	// }
 
   // Начальное ускорение.
 	if (iter == 0) {
@@ -63,7 +68,7 @@ __global__ void solving_system(float *M, float *K, float *F, float *U, float *V,
 
   // Считаем текущий вектор силы, который изменяется
   // во времени согласно какому-то закону (Например амплитуде Рикера).
-  float frequency = 100;  // Было 20
+  float frequency = 13;  // Было 20
 	Ricker_amplitude(F, tmp_force, iter, tao, frequency, offset);
 
 	if (M[i] == 0) {
@@ -77,6 +82,18 @@ __global__ void solving_system(float *M, float *K, float *F, float *U, float *V,
   // Делаем обновление вектора скорости.
 	V[(iter+1)*n_size+i] = V[iter*n_size+i]
       + tao * (alpha[iter*n_size+i] + alpha[(iter+1)*n_size+i]) / 2;
+
+
+  // Здесь пишу всю отладку для kernel.
+  // if (i == 2*(88 - 1)+1 && iter == 1) {
+  //     // printf("%f  ", V[(iter+1)*n_size+i]);
+  //     // printf("%f  ", tmp);
+  //     for (int j=0; j<n_size; ++j) {
+  //         if (K[i*n_size+j] != 0) {
+  //             printf("%d :%f   ", j, K[i*n_size+j]);
+  //         }
+  //     }
+  // }
 
 }
 

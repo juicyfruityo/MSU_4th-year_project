@@ -116,13 +116,30 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
   gpuErrchk( cudaMemcpy(U, d_u, size / n_size * step, cudaMemcpyDeviceToHost) );
 	gpuErrchk( cudaMemcpy(V, d_v, size / n_size * step, cudaMemcpyDeviceToHost) );
 
+  // Проверю что сила обнулилась.
+  float *tmp_force = new float[n_size];
+  gpuErrchk( cudaMemcpy(tmp_force, d_tmp_force, size / n_size, cudaMemcpyDeviceToHost) );
+  int flag_tmp = 0;
+  for (int i=0; i<n_size; ++i) {
+      if (tmp_force[i] != 0) {
+          flag_tmp = 1;
+          std::cout << "ERROR Force is not ZERO!!!" << '\n';
+          std::cout << tmp_force[i] << '\n';
+          break;
+      }
+  }
+  if (flag_tmp == 0) {
+      std::cout << "Force is ZERO" << '\n';
+  }
+
   // Проверка на работоспособность, что что=-то посчиталось.
   std::cout << "Check for workability of programm: " << '\n';
   int flag = 0;
   for (int j=0; j<step; ++j) {
       for (int i=0; i<n_size; ++i) {
           if (U[j*n_size+i] != 0) {
-              std::cout << "Nice !!" << '\n';
+              std::cout << "------------" << '\n';
+              std::cout << "   Nice !!" << '\n';
               flag = 1;
               break;
           }
@@ -132,7 +149,8 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
       }
   }
   if (flag == 0) {
-      std::cout << "Not Nice, ERROR!!!" << '\n';
+      std::cout << "--------------------------" << '\n';
+      std::cout << "    Not Nice, ERROR!!!" << '\n';
   }
 
   // Подсчитываем время конца выполнения задачи.
