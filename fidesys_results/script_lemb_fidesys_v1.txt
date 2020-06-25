@@ -1,0 +1,31 @@
+create surface rectangle width 10 height 4 zplane
+
+surface 1  size 0.075
+undo group begin
+surface 1  size 0.075
+mesh surface 1
+undo group end
+
+export lsdyna "/home/fidesys/data/mesh_lemb_v15_.k"  overwrite
+
+create material 1
+modify material 1 set property 'MODULUS' value 10000000
+modify material 1 set property 'POISSON' value 0
+modify material 1 set property 'DENSITY' value 10000
+
+set duplicate block elements off
+block 1 add surface 1
+block 1 material 1
+block 1 element plane order 2
+
+create force  on node 64  vector 0 1 0 0 0 0
+bcdep force 1 value 'ricker(1, 13, 0, time)'
+
+create receiver on node 64 displacement 1 1 0
+create receiver on node 64 velocity 1 1 0
+
+analysis type dynamic elasticity dim2 planestrain preload on
+dynamic method full_solution scheme explicit maxtime 1 maxsteps 1000
+output nodalforce off energy off record3d on log on vtu on material off results everystep 50
+
+calculation start path '/home/fidesys/data/valid_lemb_v13.pvd'

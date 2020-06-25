@@ -68,7 +68,7 @@ __global__ void solving_system(float *M, float *K, float *F, float *U, float *V,
 
   // Считаем текущий вектор силы, который изменяется
   // во времени согласно какому-то закону (Например амплитуде Рикера).
-  float frequency = 13;  // Было 20
+  float frequency = 30;  // Было 20
 	Ricker_amplitude(F, tmp_force, iter, tao, frequency, offset);
 
 	if (M[i] == 0) {

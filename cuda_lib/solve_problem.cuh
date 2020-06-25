@@ -129,7 +129,7 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
       }
   }
   if (flag_tmp == 0) {
-      std::cout << "Force is ZERO" << '\n';
+      std::cout << "Force is ZERO - OK" << '\n';
   }
 
   // Проверка на работоспособность, что что=-то посчиталось.
@@ -162,7 +162,8 @@ void solve_problem(const float *MasMatrix, const float *StifMatrix,
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&time, start, stop);
   std::cout << std::endl;
-  std::cout << "GPU computing time: " << time << " microseconds" << std::endl;
+  std::cout << "GPU computing time: " << time << " microseconds. Or "
+            << time / 1000.0 << " seconds. (Not sure, maybe its miliseconds)" << std::endl;
   // std::cout << std::endl;
   std::cout << "Solving problem - DONE" << std::endl;
   for (int i=0; i<25; ++i)

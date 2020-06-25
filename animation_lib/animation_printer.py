@@ -112,7 +112,7 @@ def save_animation(printer, NUM=3, name="new_gif"):
 
         return ax
 
-    anim = FuncAnimation(fig, update, frames=np.arange(2, 100, 2), interval=250)
+    anim = FuncAnimation(fig, update, frames=np.arange(2, 180, 5), interval=250)
     anim.save(full_dir + '.gif', dpi=80, writer='imagemagick')
 
     print("Animation loaded in {0}".format(folder_dir))

@@ -25,7 +25,7 @@ int main() {
   gpu_settings();
 
   // Change name of prepared mesh folder.
-  std::string mesh_name = "test_lemb_v2_4141nodes";
+  std::string mesh_name = "mesh_lemb_v3_nodes4141";
   // std::string mesh_name;
 
   // std::cout << std::endl << "Put name of folder:" << std::endl;
@@ -124,7 +124,7 @@ int main() {
   solve_problem(MasMatrix, StifMatrix, ForceMatrix, U, V, n_size, step);
 
   // Сохранение матрицы перемещений и скорости для последующего анализа.
-  std::string addition_info = "test_v5";
+  std::string addition_info = "test_v9";
   save_results(U, V, mesh_name, n_size, step, addition_info);
 
   // TODO: ещё можно удалить Elements и Nodes, если это как-то значимо влияет.
